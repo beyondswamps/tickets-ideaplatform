@@ -1,14 +1,15 @@
 package ru.ideaplatform.util;
 
+import ru.ideaplatform.identity.Ticket;
+
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class TimeHelper {
-    public static Duration flightDuration(LocalDate departureDate,
-                                          LocalTime departureTime,
-                                          LocalDate arrivalDate,
-                                          LocalTime arrivalTime) {
-        return Duration.between(departureDate.atTime(departureTime), arrivalDate.atTime(arrivalTime));
+    public static Duration flightDuration(Ticket ticket) {
+        return Duration.between(
+                ticket.getDepartureDate().atTime(ticket.getDepartureTime()),
+                ticket.getArrivalDate().atTime(ticket.getArrivalTime()));
     }
 }
