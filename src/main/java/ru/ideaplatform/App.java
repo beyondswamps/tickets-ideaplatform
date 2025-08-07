@@ -6,6 +6,7 @@ import ru.ideaplatform.util.FileHelper;
 import ru.ideaplatform.util.MathHelper;
 import ru.ideaplatform.util.TimeHelper;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +31,12 @@ public class App {
                     e.getValue().toMinutes() % 60));
         }
 
-        Double medianPrice = MathHelper.getMedianTicketPrice(ticketsVvoTlv);
-        Double averagePrice = MathHelper.getAverageTicketPrice(ticketsVvoTlv);
+        BigDecimal medianPrice = MathHelper.getMedianTicketPrice(ticketsVvoTlv);
+        BigDecimal averagePrice = MathHelper.getAverageTicketPrice(ticketsVvoTlv);
 
         System.out.println(minFlightVvoTlvText);
-        System.out.printf("Медианная цена билетов между Владивостоком и Тель-Авивом: %.2f%n", medianPrice);
-        System.out.printf("Средняя цена билетов между Владивостоком и Тель-Авивом: %.2f%n", averagePrice);
+        System.out.printf("Медианная цена билетов между Владивостоком и Тель-Авивом: %s%n", medianPrice);
+        System.out.printf("Средняя цена билетов между Владивостоком и Тель-Авивом: %s%n", averagePrice);
     }
 
     public static List<Ticket> filterByAirportCode(List<Ticket> tickets, String airportCode1, String airportCode2) {

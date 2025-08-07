@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -27,5 +28,5 @@ public class Ticket {
     LocalTime arrivalTime;
     String carrier;
     Integer stops;
-    Integer price;
+    BigDecimal price;
 }
