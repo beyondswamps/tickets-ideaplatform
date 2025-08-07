@@ -1,39 +1,40 @@
 package ru.ideaplatform;
 
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import ru.ideaplatform.identity.Ticket;
-import ru.ideaplatform.dto.TicketsDto;
+import ru.ideaplatform.util.FileHelper;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.min;
+import static java.util.stream.Collectors.minBy;
+
 
 public class App {
     public static void main(String[] args) {
-        File jsonFile = new File(args[0]);
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-        mapper.registerModule(new JavaTimeModule());
-        TicketsDto tickets;
+        List<Ticket> ticketList = FileHelper.ticketListFromJsonFile(args[0]);
 
-        try {
-            tickets = mapper.readValue(jsonFile, TicketsDto.class);
-        } catch (DatabindException de) {
-            throw new RuntimeException("DatabindException: " + de.getMessage());
-        } catch (StreamReadException sre) {
-            throw new RuntimeException("StreamReadException: " + sre.getMessage());
-        } catch (IOException ioe) {
-            throw new RuntimeException("IOException: " + ioe.getMessage());
-        }
+//       Map<String, Optional<Integer>> map = ticketList.stream()
+//                .filter(ticket -> ticket.getOrigin().equals("VVO") && ticket.getDestination().equals("TLV")
+//                || ticket.getOrigin().equals("TLV") && ticket.getDestination().equals("VVO"))
+//                .collect(Collectors.groupingBy(Ticket::getCarrier, Collectors.mapping(Ticket::getPrice, minBy(Integer::compareTo))));
+//
+        Map<String, Integer> map = ticketList.stream()
+                .filter(ticket -> ticket.getOrigin().equals("VVO") && ticket.getDestination().equals("TLV")
+                || ticket.getOrigin().equals("TLV") && ticket.getDestination().equals("VVO"))
+                .collect(Collectors.toMap(Ticket::getCarrier, Ticket::getPrice, Math::min));
 
-        List<Ticket> ticketList = tickets.getTickets();
-        for (Ticket ticket : ticketList) {
-            System.out.println(ticket);
-        }
+//        Integer minPriceVvoTlv = ticketList.stream()
+//                .filter(ticket -> (ticket.getOrigin().equals("VVO") && ticket.getDestination().equals("TLV"))
+//                              || (ticket.getOrigin().equals("TLV") && ticket.getDestination().equals("VVO")))
+//                .map(Ticket::getPrice)
+//                .min(Integer::compareTo)
+//                .orElse(0);
+
+        System.out.println(map);
+
     }
 }
