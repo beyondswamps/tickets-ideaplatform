@@ -3,9 +3,8 @@ package ru.ideaplatform.util;
 import ru.ideaplatform.identity.Ticket;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static  java.util.stream.Collectors.averagingDouble;
+import static java.util.stream.Collectors.averagingDouble;
 
 public class MathHelper {
     public static Double getMedianTicketPrice(List<Ticket> tickets) {

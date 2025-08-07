@@ -15,29 +15,33 @@ import java.util.stream.Collectors;
 public class App {
     public static void main(String[] args) {
         List<Ticket> ticketList = FileHelper.ticketListFromJsonFile(args[0]);
+        List<Ticket> ticketsVvoTlv = filterByAirportCode(ticketList, "VVO", "TLV");
 
-        Map<String, Duration> carrierByMinDuration = ticketList.stream()
-                .filter(ticket -> ticket.getOrigin().equals("VVO") && ticket.getDestination().equals("TLV")
-                                        || ticket.getOrigin().equals("TLV") && ticket.getDestination().equals("VVO"))
+        Map<String, Duration> carrierByMinDuration = ticketsVvoTlv.stream()
                 .collect(Collectors.toMap(Ticket::getCarrier, TimeHelper::flightDuration,
                         (Duration dur1, Duration dur2) -> (dur1.compareTo(dur2) < 0) ? dur1 : dur2));
 
-        Map<String, String> carrierByMinTime = carrierByMinDuration.entrySet().stream()
-                        .collect(Collectors.toMap(Map.Entry::getKey,
-                                e -> String.format("%sч%sмин", e.getValue().toHours(), e.getValue().toMinutes() % 60)));
-
-
-        List<Ticket> ticketsVvoTlv = ticketList.stream()
-                .filter(ticket -> ticket.getOrigin().equals("VVO") && ticket.getDestination().equals("TLV")
-                                  || ticket.getOrigin().equals("TLV") && ticket.getDestination().equals("VVO"))
-                .toList();
+        StringBuilder minFlightVvoTlvText = new StringBuilder(
+                "Минимальное время полета между городами Владивосток и Тель-Авив для каждого авиаперевозчика:\n");
+        for (Map.Entry<String, Duration> e : carrierByMinDuration.entrySet()) {
+            minFlightVvoTlvText.append(String.format("%s: %s часов %s минут%n",
+                    e.getKey(),
+                    e.getValue().toHours(),
+                    e.getValue().toMinutes() % 60));
+        }
 
         Double medianPrice = MathHelper.getMedianTicketPrice(ticketsVvoTlv);
         Double averagePrice = MathHelper.getAverageTicketPrice(ticketsVvoTlv);
 
-        System.out.println(carrierByMinTime);
-        System.out.printf("Медианная цена билетов между Владивостоком и Тель-Авивом: %s%n", medianPrice);
-        System.out.printf("Средняя цена билетов между Владивостоком и Тель-Авивом: %s%n", averagePrice);
+        System.out.println(minFlightVvoTlvText);
+        System.out.printf("Медианная цена билетов между Владивостоком и Тель-Авивом: %.2f%n", medianPrice);
+        System.out.printf("Средняя цена билетов между Владивостоком и Тель-Авивом: %.2f%n", averagePrice);
+    }
 
+    public static List<Ticket> filterByAirportCode(List<Ticket> tickets, String airportCode1, String airportCode2) {
+        return tickets.stream()
+                .filter(ticket -> ticket.getOrigin().equals(airportCode1) && ticket.getDestination().equals(airportCode2)
+                                  || ticket.getOrigin().equals(airportCode2) && ticket.getDestination().equals(airportCode1))
+                .toList();
     }
 }
