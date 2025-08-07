@@ -1,6 +1,5 @@
 package ru.ideaplatform;
 
-
 import ru.ideaplatform.identity.Ticket;
 import ru.ideaplatform.util.FileHelper;
 import ru.ideaplatform.util.MathHelper;
@@ -11,7 +10,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 
 public class App {
     public static void main(String[] args) {
@@ -35,8 +33,9 @@ public class App {
         BigDecimal averagePrice = MathHelper.getAverageTicketPrice(ticketsVvoTlv);
 
         System.out.println(minFlightVvoTlvText);
-        System.out.printf("Медианная цена билетов между Владивостоком и Тель-Авивом: %s%n", medianPrice);
-        System.out.printf("Средняя цена билетов между Владивостоком и Тель-Авивом: %s%n", averagePrice);
+        System.out.printf(
+                "Разница между средней ценой и медианой между городами Владивосток и Тель-Авив: %s%n",
+                medianPrice.subtract(averagePrice).abs());
     }
 
     public static List<Ticket> filterByAirportCode(List<Ticket> tickets, String airportCode1, String airportCode2) {
